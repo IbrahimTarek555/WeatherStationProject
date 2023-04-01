@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 #include "WiFi.h"
 
+#include <LiquidCrystal.h>
 #include "DHT.h"
 #include <Wire.h>
 #include <Adafruit_BMP085.h>
@@ -102,8 +103,8 @@ void publishMessage()
   doc["UV light level"] = UVLevel;
   doc["Humidity"] = Humidity;
   doc["AC"] = MQ135Data;  
-  doc["Rain Status"] = RainAnalogVal;
-  doc["Water LVL"] = RainDigitalVal; 
+  doc["Rain Status"] = RainDigitalVal;
+  doc["Water LVL"] = RainAnalogVal; 
   
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer); // print to client
@@ -176,6 +177,34 @@ void loop() {
   /*Temperature*/
   Temperature = (DHTTemperature + BMPTemperature) / 2;  //Float Number
   
+  /*Serial - Serial - Serial - Serial - Serial - Serial - Serial*/
+  Serial.print(F("Temp. = "));
+  Serial.println(Temperature);
+  Serial.print(F("Pressure = "));
+  Serial.println(Pressure);
+  Serial.print("Altitude = ");
+  Serial.println(Altitude);
+  Serial.print("UV light level: ");
+  Serial.println(UVLevel);
+  Serial.print("Humidity = ");
+  Serial.println(Humidity);
+  Serial.print("AC = ");
+  Serial.println(MQ135Data);
+  Serial.print("Rain Status: ");
+  if(RainDigitalVal == 1)
+  {
+    Serial.println("Dry");
+  }
+  else
+  {
+    Serial.println("Rainy");
+  }  
+  Serial.print("Water LVL: ");
+  Serial.println(RainAnalogVal);  
+
+  publishMessage();
+  client.loop();
+
   /*LCD - LCD - LCD - LCD - LCD - LCD - LCD*/
   /*Temperature*/
   lcd.setCursor(0, 0);
@@ -227,32 +256,4 @@ void loop() {
   delay(2000);
   lcd.clear();
   
-  // serial
-  Serial.print(F("Temp. = "));
-  Serial.println(Temperature);
-  Serial.print(F("Pressure = "));
-  Serial.println(Pressure);
-  Serial.print("Altitude = ");
-  Serial.println(Altitude);
-  Serial.print("UV light level: ");
-  Serial.println(UVLevel);
-  Serial.print("Humidity = ");
-  Serial.println(Humidity);
-  Serial.print("AC = ");
-  Serial.println(MQ135Data);
-  Serial.print("Rain Status: ");
-  if(RainDigitalVal == 1)
-  {
-    Serial.println("Dry");
-  }
-  else
-  {
-    Serial.println("Rainy");
-  }  
-  Serial.print("Water LVL: ");
-  Serial.println(RainAnalogVal);  
-
-  publishMessage();
-  client.loop();
-  delay(1000);  
 }
