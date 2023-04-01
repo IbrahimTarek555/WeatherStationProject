@@ -1,9 +1,3 @@
-#include "secrets.h"
-#include <WiFiClientSecure.h>
-#include <PubSubClient.h>
-#include <ArduinoJson.h>
-#include "WiFi.h"
-
 #include <LiquidCrystal.h>
 #include "DHT.h"
 #include <Wire.h>
