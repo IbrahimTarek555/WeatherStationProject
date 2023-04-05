@@ -10,6 +10,18 @@
 #include <Adafruit_BMP085.h>
 #include "Adafruit_VEML6070.h"
 
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
+/*Time Stamp*/
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
+
+String formattedDate;
+String dayStamp;
+String timeStamp;
+int splitT;
+
 #define THINGNAME               "ESP32"
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
@@ -105,7 +117,9 @@ void publishMessage()
   doc["AC"] = MQ135Data;  
   doc["Rain Status"] = RainDigitalVal;
   doc["Water LVL"] = RainAnalogVal; 
-  
+  doc["Time Stamp"] = timeStamp;
+  doc["Date Stamp"] = dayStamp;
+
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer); // print to client
  
@@ -146,6 +160,16 @@ void setup() {
 
   /*VEML Sensor*/
   uv.begin(VEML6070_1_T);
+
+  /*Time Stamp*/
+  timeClient.begin();
+  // Set offset time in seconds to adjust for your timezone, for example:
+  // GMT +1 = 3600
+  // GMT +8 = 28800
+  // GMT -1 = -3600
+  // GMT 0 = 0
+  timeClient.setTimeOffset(7200);
+
 }
 
 void loop() {
@@ -256,4 +280,26 @@ void loop() {
   delay(2000);
   lcd.clear();
   
+  /*Time Stamp*/
+  while(!timeClient.update()) {
+   timeClient.forceUpdate();
+  }
+  // The formattedDate comes with the following format:
+  // 2018-05-28T16:00:13Z
+  // We need to extract date and time
+  formattedDate = timeClient.getFormattedDate();
+  // Extract date
+  splitT = formattedDate.indexOf("T");
+  dayStamp = formattedDate.substring(0, splitT);
+  lcd.setCursor(0, 1);
+  lcd.print("DATE: ");
+  lcd.print(dayStamp);
+  // Extract time
+  timeStamp = formattedDate.substring(splitT+1, formattedDate.length()-1);
+  lcd.setCursor(0, 2);
+  lcd.print("HOUR: ");
+  lcd.print(timeStamp);
+  delay(2000);
+
+  delay(900000);  
 }
