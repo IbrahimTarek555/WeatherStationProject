@@ -65,10 +65,10 @@ PubSubClient client(net);
 void connectAWS()
 {
   WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  WiFi.begin(WIFI_SSID);  
  
   Serial.println("Connecting to Wi-Fi");
- 
+
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
@@ -301,5 +301,4 @@ void loop() {
   lcd.print(timeStamp);
   delay(2000);
 
-  delay(900000);  
 }
