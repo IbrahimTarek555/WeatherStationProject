@@ -1,2 +1,2 @@
-# Smart-Green-House
-Sub Project of my graduation project
+# Weather Station
+Sub Project of my graduation project (Smart Green House).
