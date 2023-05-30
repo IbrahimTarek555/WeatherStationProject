@@ -1,3 +1,3 @@
 # Smart-Green-House
 
-# This is our graduation project in Mansoura University
+# Sub Project of my graduation project
